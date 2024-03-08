@@ -125,6 +125,7 @@ def init():
 def hostingBased():
     imagefile = request.files['imageFile']
     image_path = "./App/images/" + imagefile.filename
+    os.makedirs(os.path.dirname(image_path), exist_ok=True)
     imagefile.save(image_path)
 
     store_path=os.path.join(working_dir, 'storage')
@@ -154,6 +155,7 @@ class predictApi(Resource):
         imagefile = request.files['inputImage']
         if imagefile:
             image_path = "./App/images/" + imagefile.filename
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
             imagefile.save(image_path)
 
             store_path=os.path.join(working_dir, 'storage')
@@ -183,5 +185,9 @@ api.add_resource(predictApi, '/api/predict')
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+
+# if __name__ == '__main__':
+#     app.run(port=3000, debug=True)
 
     
