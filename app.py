@@ -158,8 +158,7 @@ class predictApi(Resource):
 
             store_path=os.path.join(working_dir, 'storage')
             if os.path.isdir(store_path):
-                shutil.rmtre
-                e(store_path)
+                shutil.rmtree(store_path)
             os.mkdir(store_path)
             
             img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
