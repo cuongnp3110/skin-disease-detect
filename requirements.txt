@@ -3,3 +3,5 @@ Flask-RESTful==0.3.10
 opencv-python==4.9.0.80
 numpy==1.26.3
 keras==2.15.0
+tensorflow==2.15.0
+tensorflow-estimator~=2.15.0
