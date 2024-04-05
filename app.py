@@ -26,6 +26,7 @@ class_label_map = { 0: 'Eczema',
                     8: 'Seborrheic',
                     9: 'Tinea'}
 
+
 def predictor(sdir,  model_path, crop_image = False):    
     img_size=(300, 300)
     scale=1
@@ -42,7 +43,7 @@ def predictor(sdir,  model_path, crop_image = False):
     paths=os.listdir(sdir)
     for f in paths:
         path_list.append(os.path.join(sdir,f))
-    print ('Model is being loaded - this will take a few seconds')
+    print (' Model is being loaded - this will take a few seconds')
     model=load_model(model_path)
     image_count=len(path_list)    
     index_list=[] 
@@ -112,7 +113,7 @@ def predict(image_path, store_path, img):
     class_name, probability = predictor(store_path,  model_path, crop_image = False) # run the classifier
     msg=f'Image is of class {class_name} with a probability of {probability * 100: 6.2f} %'
     print(msg)
-    return [class_name, probability]
+    return class_name, probability
 
 
 @app.route('/', methods=['GET'])
@@ -135,8 +136,7 @@ def hostingBased():
     img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
     img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    class_name = predict(image_path, store_path, img)[0]
-    prob = predict(image_path, store_path, img)[1] 
+    class_name, prob = predict(image_path, store_path, img)
 
     if os.path.exists(image_path):
         os.remove(image_path)
@@ -188,3 +188,5 @@ if __name__ == "__main__":
 
 # if __name__ == '__main__':
 #     app.run(port=3000, debug=True)
+
+    
