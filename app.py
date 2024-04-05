@@ -26,7 +26,6 @@ class_label_map = { 0: 'Eczema',
                     8: 'Seborrheic',
                     9: 'Tinea'}
 
-
 def predictor(sdir,  model_path, crop_image = False):    
     img_size=(300, 300)
     scale=1
@@ -43,7 +42,7 @@ def predictor(sdir,  model_path, crop_image = False):
     paths=os.listdir(sdir)
     for f in paths:
         path_list.append(os.path.join(sdir,f))
-    print (' Model is being loaded - this will take a few seconds')
+    print ('Model is being loaded - this will take a few seconds')
     model=load_model(model_path)
     image_count=len(path_list)    
     index_list=[] 
@@ -189,5 +188,3 @@ if __name__ == "__main__":
 
 # if __name__ == '__main__':
 #     app.run(port=3000, debug=True)
-
-    
