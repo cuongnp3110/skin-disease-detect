@@ -12,7 +12,7 @@ import cv2 as cv2
 app = Flask(__name__)
 api = Api(app)
 
-model_path = r'EfficientNetB3_Model_22.h5'
+model_path = r'EfficientNetB3_Model_22.tf'
 working_dir = r'./App/'
 
 class_label_map = { 0: 'Eczema',
