@@ -46,35 +46,29 @@ def predictor(sdir,  model_path, crop_image = False):
     print (' Model is being loaded - this will take a few seconds')
     model=load_model(model_path)
     image_count=len(path_list)    
-    index_list=[] 
+    index_list=[]
     prob_list=[]
     cropped_image_list=[]
     good_image_count=0
     for i in range (image_count):       
         img=cv2.imread(path_list[i])
-        if crop_image == True:
-
-            # status, img=crop(img)
-            status=True
-        else:
-            status=True
-        if status== True:
-            good_image_count +=1
-            img=cv2.resize(img, img_size)
-            cropped_image_list.append(img)
-            img=img*s2 - s1
-            img=np.expand_dims(img, axis=0)
-            p= np.squeeze (model.predict(img))
-            index=np.argmax(p)
-            prob=p[index]
-            index_list.append(index)
-            prob_list.append(prob)
-            print("p: ", p)
+        good_image_count +=1
+        img=cv2.resize(img, img_size)
+        cropped_image_list.append(img)
+        img=img*s2 - s1
+        img=np.expand_dims(img, axis=0)
+        p= np.squeeze (model.predict(img))
+        index=np.argmax(p)
+        prob=p[index]
+        index_list.append(index)
+        prob_list.append(prob)
+        print("p: ", p)
     if good_image_count==1:
         # class_name= class_df['class'].iloc[index_list[0]]
         class_name = class_label_map[index_list[0]]
         probability= prob_list[0]
         img=cropped_image_list [0]
+        print(1)
         return class_name, probability
     elif good_image_count == 0:
         return None, None
@@ -99,6 +93,7 @@ def predictor(sdir,  model_path, crop_image = False):
     img= cropped_image_list[isave]/255    
     # class_name=class_df['class'].iloc[best_index]
     class_name = class_label_map[best_index]
+    print(2)
     return class_name, bestsum/image_count
 
 
@@ -110,7 +105,7 @@ def predict(image_path, store_path, img):
     # check if the directory was created and image stored
     print(os.listdir(store_path))
 
-    class_name, probability = predictor(store_path,  model_path, crop_image = False) # run the classifier
+    class_name, probability = predictor(store_path,  model_path) # run the classifier
     msg=f'Image is of class {class_name} with a probability of {probability * 100: 6.2f} %'
     print(msg)
     return class_name, probability
@@ -136,7 +131,8 @@ def hostingBased():
     img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
     img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    class_name, prob = predict(image_path, store_path, img)
+    class_name, prob = "X", 20
+    # predict(image_path, store_path, img)
 
     if os.path.exists(image_path):
         os.remove(image_path)
@@ -165,8 +161,7 @@ class predictApi(Resource):
             img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
             img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-            class_name = predict(image_path, store_path, img)[0]
-            prob = predict(image_path, store_path, img)[1]
+            class_name, prob = predict(image_path, store_path, img)
 
             if os.path.exists(image_path):
                 os.remove(image_path)
