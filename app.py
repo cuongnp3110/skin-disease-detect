@@ -131,7 +131,7 @@ def hostingBased():
     img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
     img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    class_name, prob = "X", 20
+    class_name, prob = predict(image_path, store_path, img)
     # predict(image_path, store_path, img)
 
     if os.path.exists(image_path):
