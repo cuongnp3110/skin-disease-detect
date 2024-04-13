@@ -12,7 +12,8 @@ import cv2 as cv2
 app = Flask(__name__)
 api = Api(app)
 
-model_path = r'EfficientNetB3_Model_22.tf'
+# model_path = r'EfficientNetB3_Model_22.tf'
+model = load_model('EfficientNetB3_Model_22.h5')
 working_dir = r'./App/'
 
 class_label_map = { 0: 'Eczema',
@@ -27,7 +28,7 @@ class_label_map = { 0: 'Eczema',
                     9: 'Tinea'}
 
 
-def predictor(sdir,  model_path, crop_image = False):    
+def predictor(sdir):    
     img_size=(300, 300)
     scale=1
     try: 
@@ -44,7 +45,6 @@ def predictor(sdir,  model_path, crop_image = False):
     for f in paths:
         path_list.append(os.path.join(sdir,f))
     print (' Model is being loaded - this will take a few seconds')
-    model=load_model(model_path)
     image_count=len(path_list)    
     index_list=[]
     prob_list=[]
@@ -105,7 +105,7 @@ def predict(image_path, store_path, img):
     # check if the directory was created and image stored
     print(os.listdir(store_path))
 
-    class_name, probability = predictor(store_path,  model_path) # run the classifier
+    class_name, probability = predictor(store_path) # run the classifier
     msg=f'Image is of class {class_name} with a probability of {probability * 100: 6.2f} %'
     print(msg)
     return class_name, probability
