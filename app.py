@@ -115,41 +115,41 @@ def hostingBased():
     return render_template('index.html', output = output)
 
 
-class predictApi(Resource):
-    def post(self):
-        # data = request.get_json()
-        # image_data = request.form.get('image')
-        imagefile = request.files['inputImage']
-        if imagefile:
-            image_path = "./App/images/" + imagefile.filename
-            os.makedirs(os.path.dirname(image_path), exist_ok=True)
-            imagefile.save(image_path)
+# class predictApi(Resource):
+#     def post(self):
+#         # data = request.get_json()
+#         # image_data = request.form.get('image')
+#         imagefile = request.files['inputImage']
+#         if imagefile:
+#             image_path = "./App/images/" + imagefile.filename
+#             os.makedirs(os.path.dirname(image_path), exist_ok=True)
+#             imagefile.save(image_path)
 
-            store_path=os.path.join(working_dir, 'storage')
-            if os.path.isdir(store_path):
-                shutil.rmtree(store_path)
-            os.mkdir(store_path)
+#             store_path=os.path.join(working_dir, 'storage')
+#             if os.path.isdir(store_path):
+#                 shutil.rmtree(store_path)
+#             os.mkdir(store_path)
 
-            try:
-                img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
-                img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            except:
-                return {'message': 'Error'}, 200
+#             try:
+#                 img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
+#                 img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#             except:
+#                 return {'message': 'Error'}, 200
 
-            class_name, prob = predict(image_path, store_path, img)
+#             class_name, prob = predict(image_path, store_path, img)
 
-            if os.path.exists(image_path):
-                os.remove(image_path)
-                print("File deleted:", image_path)
-            else:
-                print("File does not exist:", image_path)
+#             if os.path.exists(image_path):
+#                 os.remove(image_path)
+#                 print("File deleted:", image_path)
+#             else:
+#                 print("File does not exist:", image_path)
                 
-            return {'class': class_name, 'prob': prob*100}, 200
-        else:
-            return {'message': 'No data received'}, 400  # Bad request status code
+#             return {'class': class_name, 'prob': prob*100}, 200
+#         else:
+#             return {'message': 'No data received'}, 400  # Bad request status code
         
 
-api.add_resource(predictApi, '/api/predict')
+# api.add_resource(predictApi, '/api/predict')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
