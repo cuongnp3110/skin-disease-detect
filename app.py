@@ -38,14 +38,12 @@ def predictor(sdir):
         path_list.append(os.path.join(sdir,f))
     print (' Model is being loaded - this will take a few seconds')
     image_count=len(path_list)   
-    print(1) 
     index_list=[]
     prob_list=[]
     cropped_image_list=[]
     good_image_count=0
-    
-    print(2) 
-    for i in range (image_count):       
+    for i in range (image_count):     
+        print(3)   
         img=cv2.imread(path_list[i])
         good_image_count +=1
         img=cv2.resize(img, img_size)
@@ -58,37 +56,11 @@ def predictor(sdir):
         index_list.append(index)
         prob_list.append(prob)
         print("p: ", p)
-    if good_image_count==1:
-        # class_name= class_df['class'].iloc[index_list[0]]
-        class_name = class_label_map[index_list[0]]
-        probability= prob_list[0]
-        img=cropped_image_list [0]
-        return class_name, probability
-    elif good_image_count == 0:
-        return None, None
-    most=0
-    for i in range (len(index_list)-1):
-        key= index_list[i]
-        keycount=0
-        for j in range (i+1, len(index_list)):
-            nkey= index_list[j]
-            if nkey == key:
-                keycount +=1
-        if keycount> most:
-            most=keycount
-            isave=i
-    best_index=index_list[isave]    
-    psum=0
-    bestsum=0
-    for i in range (len(index_list)):
-        psum += prob_list[i]
-        if index_list[i]==best_index:
-            bestsum += prob_list[i]  
-    img= cropped_image_list[isave]/255    
-    # class_name=class_df['class'].iloc[best_index]
-    class_name = class_label_map[best_index]
-    print(2)
-    return class_name, bestsum/image_count
+        
+    class_name = class_label_map[index_list[0]]
+    probability= prob_list[0]
+    img=cropped_image_list [0]
+    return class_name, probability
 
 
 def predict(image_path, store_path, img):
@@ -138,7 +110,7 @@ def hostingBased():
     if prob > 0.7:
         output = "Image is of class " + class_name # + "with a probability of " + f' {prob * 100: 6.2f} %'
     else:
-        output = "Not good enough to make accurate predictions for this case"
+        output = "Not good enough to make accurate prediction for this case"
 
     return render_template('index.html', output = output)
 
