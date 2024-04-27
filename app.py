@@ -1,10 +1,8 @@
 from flask import Flask, render_template, request
 from flask_restful import Api, Resource
 
-import keras.utils as image
 import os
 import numpy as np
-import pandas as pd
 from keras.models import load_model
 import shutil
 import cv2 as cv2
@@ -39,11 +37,14 @@ def predictor(sdir):
     for f in paths:
         path_list.append(os.path.join(sdir,f))
     print (' Model is being loaded - this will take a few seconds')
-    image_count=len(path_list)    
+    image_count=len(path_list)   
+    print(1) 
     index_list=[]
     prob_list=[]
     cropped_image_list=[]
     good_image_count=0
+    
+    print(2) 
     for i in range (image_count):       
         img=cv2.imread(path_list[i])
         good_image_count +=1
