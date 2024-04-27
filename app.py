@@ -13,20 +13,14 @@ app = Flask(__name__)
 api = Api(app)
 
 # model_path = r'EfficientNetB3_Model_22.tf'
-model = load_model('EfficientNetB3_Model_22.h5')
+model = load_model('EfficientNetB2-5Classes.h5')
 working_dir = r'./App/'
 
-class_label_map = { 0: 'Eczema',
-                    1: 'Warts',
-                    2: 'Melanoma',
-                    3: 'Atopic',
-                    4: 'Basal',
-                    5: 'Melanocytic',
-                    6: 'Benign',
-                    7: 'Psoriasis',
-                    8: 'Seborrheic',
-                    9: 'Tinea'}
-
+class_label_map = { 0: 'Melanoma',
+                    1: 'Basal Cell Carcinoma',
+                    2: 'Melanocytic Nevi',
+                    3: 'Benign Keratosis-like Lesions',
+                    4: 'Seborrheic Keratoses and other Benign Tumors'}
 
 def predictor(sdir):    
     img_size=(300, 300)
@@ -68,7 +62,6 @@ def predictor(sdir):
         class_name = class_label_map[index_list[0]]
         probability= prob_list[0]
         img=cropped_image_list [0]
-        print(1)
         return class_name, probability
     elif good_image_count == 0:
         return None, None
@@ -110,7 +103,6 @@ def predict(image_path, store_path, img):
     print(msg)
     return class_name, probability
 
-
 @app.route('/', methods=['GET'])
 def init():
     return render_template('index.html')
@@ -128,8 +120,11 @@ def hostingBased():
         shutil.rmtree(store_path)
     os.mkdir(store_path)
     
-    img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
-    img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    try:
+        img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
+        img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    except:
+        return render_template('index.html', output = "Error")
 
     class_name, prob = predict(image_path, store_path, img)
 
@@ -139,7 +134,12 @@ def hostingBased():
     else:
         print("File does not exist:", image_path)
 
-    return render_template('index.html', prediction = class_name, probability = f' {prob * 100: 6.2f} %')
+    if prob > 0.7:
+        output = "Image is of class " + class_name # + "with a probability of " + f' {prob * 100: 6.2f} %'
+    else:
+        output = "Not good enough to make accurate predictions for this case"
+
+    return render_template('index.html', output = output)
 
 
 class predictApi(Resource):
@@ -156,9 +156,12 @@ class predictApi(Resource):
             if os.path.isdir(store_path):
                 shutil.rmtree(store_path)
             os.mkdir(store_path)
-            
-            img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
-            img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+            try:
+                img=cv2.imread(image_path,  cv2.IMREAD_REDUCED_COLOR_2)
+                img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            except:
+                return {'message': 'Error'}, 200
 
             class_name, prob = predict(image_path, store_path, img)
 
@@ -167,7 +170,7 @@ class predictApi(Resource):
                 print("File deleted:", image_path)
             else:
                 print("File does not exist:", image_path)
-
+                
             return {'class': class_name, 'prob': prob*100}, 200
         else:
             return {'message': 'No data received'}, 400  # Bad request status code
