@@ -11,7 +11,7 @@ app = Flask(__name__)
 api = Api(app)
 
 # model_path = r'EfficientNetB3_Model_22.tf'
-model = load_model('EfficientNetB2-5Classes.h5')
+model = load_model('App/m5.h5')
 working_dir = r'./App/'
 
 class_label_map = { 0: 'Melanoma',
@@ -20,7 +20,7 @@ class_label_map = { 0: 'Melanoma',
                     3: 'Benign Keratosis-like Lesions',
                     4: 'Seborrheic Keratoses and other Benign Tumors'}
 
-def predictor(sdir):    
+def predictor(sdir):
     img_size=(300, 300)
     scale=1
     try: 
